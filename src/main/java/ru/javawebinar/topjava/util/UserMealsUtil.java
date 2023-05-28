@@ -29,9 +29,12 @@ public class UserMealsUtil {
     }
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        Map<LocalDate, Integer> totalCaloriesPerDate = getTotalCaloriesPerDate(meals);
-        List<UserMealWithExcess> userMealWithExcessList = new ArrayList<>();
+        Map<LocalDate, Integer> totalCaloriesPerDate = new HashMap<>();
+        for (UserMeal meal : meals) {
+            totalCaloriesPerDate.merge(meal.getDateTime().toLocalDate(), meal.getCalories(), Integer::sum);
+        }
 
+        List<UserMealWithExcess> userMealWithExcessList = new ArrayList<>();
         for (UserMeal meal : meals) {
             LocalDateTime mealDateTime = meal.getDateTime();
             if (TimeUtil.isBetweenHalfOpen(mealDateTime.toLocalTime(), startTime, endTime)) {
@@ -43,22 +46,14 @@ public class UserMealsUtil {
     }
 
     public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        Map<LocalDate, Integer> totalCaloriesPerDate = meals.stream().collect(Collectors.groupingBy(
-                meal -> meal.getDateTime().toLocalDate(), Collectors.summingInt(UserMeal::getCalories)));
+        Map<LocalDate, Integer> totalCaloriesPerDate = meals.stream()
+                .collect(Collectors.groupingBy(meal ->
+                        meal.getDateTime().toLocalDate(), Collectors.summingInt(UserMeal::getCalories)));
 
         return meals.stream()
                 .filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime))
                 .map(meal -> new UserMealWithExcess(meal.getDateTime(), meal.getDescription(), meal.getCalories(),
                         totalCaloriesPerDate.get(meal.getDateTime().toLocalDate()) > caloriesPerDay))
                 .collect(Collectors.toList());
-    }
-
-    private static Map<LocalDate, Integer> getTotalCaloriesPerDate(List<UserMeal> meals) {
-        Map<LocalDate, Integer> totalCaloriesPerDate = new HashMap<>();
-        for (UserMeal meal : meals) {
-            LocalDate mealDate = meal.getDateTime().toLocalDate();
-            totalCaloriesPerDate.merge(mealDate, meal.getCalories(), Integer::sum);
-        }
-        return totalCaloriesPerDate;
     }
 }

@@ -10,20 +10,31 @@
 <h3><a href="index.html">Home</a></h3>
 <hr>
 <h2>Meals</h2>
+<p><a href="meals?action=create">Add meal</a></p>
 <table border="1" cellspacing="0" cellpadding="5" frame="1">
     <tr>
         <th>Date</th>
         <th>Description</th>
         <th>Calories</th>
+        <th></th>
+        <th></th>
     </tr>
     <jsp:useBean id="mealsTo" scope="request" type="java.util.List"/>
     <c:forEach items="${mealsTo}" var="mealTo">
         <tr>
-            <c:set var="color" value="${mealTo.excess == true ? \"red\" : \"green\"}"/>
-            <c:set var="dateTime" value="${mealTo.dateTime}"/>
-            <td><font color="${color}">${fn:replace(dateTime,"T"," ")}</font></td>
-            <td><font color="${color}"><c:out value="${mealTo.description}"/></font></td>
-            <td><font color="${color}"><c:out value="${mealTo.calories}"/></font></td>
+            <c:set var="color" value="${mealTo.excess ? \"red\" : \"green\"}"/>
+            <font color="${color}">
+                <td><font color="${color}">${fn:replace(mealTo.dateTime,"T"," ")}</font></td>
+                <td><font color="${color}">${mealTo.description}</font></td>
+                <td><font color="${color}">${mealTo.calories}</font></td>
+            </font>
+            <td><a href="meals?action=update&id=${mealTo.id}">Update</a></td>
+            <td><a href="meals?action=delete&id=${mealTo.id}">Delete</a></td>
+                <%--<td><font color="${color}">${fn:replace(mealTo.dateTime,"T"," ")}</font></td>
+                <td><font color="${color}">${mealTo.description}</font></td>
+                <td><font color="${color}">${mealTo.calories}</font></td>
+                <td><a href="meals?action=update&id=${mealTo.id}">Update</a></td>
+                <td><a href="meals?action=delete&id=${mealTo.id}">Delete</a></td>--%>
         </tr>
     </c:forEach>
 </table>

@@ -6,6 +6,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -36,8 +37,8 @@ public class MealService {
         return new ArrayList<>(repository.getAll(userId));
     }
 
-    public Collection<Meal> getAllFilteredByDate(int userId, LocalDate startDate, LocalDate endDate) {
-        return new ArrayList<>(repository.getAllFilteredByDate(userId, startDate, endDate));
+    public Collection<Meal> getAllFilteredByDateAndTime(int userId, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+        return new ArrayList<>(repository.getAllFilteredByDateAndTime(userId, startDate, startTime, endDate, endTime));
     }
 
     public void update(int userId, Meal meal) {

@@ -32,6 +32,8 @@ public class InMemoryMealRepository implements MealRepository {
         save(1, new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000));
         save(1, new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500));
         save(1, new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
+        save(2, new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед другого пользователя", 500));
+        save(2, new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин другого пользователя", 410));
     }
 
     @Override
@@ -77,7 +79,6 @@ public class InMemoryMealRepository implements MealRepository {
 
         return userMeals.values().stream()
                 .filter(filter)
-                .collect(Collectors.toList()).stream()
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }

@@ -25,19 +25,19 @@
         <div>
             <div>
                 From date (inclusive)
-                <input name="startDate" type="date">
+                <input name="startDate" type="date" value="${param.startDate}">
             </div>
             <div>
                 To date (inclusive)
-                <input name="endDate" type="date">
+                <input name="endDate" type="date" value="${param.endDate}">
             </div>
             <div>
                 From time (inclusive)
-                <input name="startTime" type="time">
+                <input name="startTime" type="time" value="${param.startTime}">
             </div>
             <div>
                 To time (exclusive)
-                <input name="endTime" type="time">
+                <input name="endTime" type="time" value="${param.endTime}">
             </div>
         </div>
         <input type="hidden" name="action" value="filter">

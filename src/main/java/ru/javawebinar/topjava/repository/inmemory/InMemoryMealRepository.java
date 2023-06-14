@@ -5,11 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.util.DateTimeUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.Month;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Repository
@@ -26,10 +25,13 @@ public class InMemoryMealRepository implements MealRepository {
     private final AtomicInteger counter = new AtomicInteger(0);
 
     {
-        save(1, new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "first user meal", 1000));
-        save(1, new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "another first user meal", 1000));
-        save(2, new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "second user meal", 322));
-        save(2, new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "another second user meal", 322));
+        save(1, new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500));
+        save(1, new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000));
+        save(1, new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500));
+        save(1, new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100));
+        save(1, new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000));
+        save(1, new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500));
+        save(1, new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
     }
 
     @Override
@@ -58,22 +60,25 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
+        return filteredByPredicate(userId, meal -> true);
+    }
+
+    @Override
+    public List<Meal> getAllFilteredByDate(int userId, LocalDate startDate, LocalDate endDate) {
+        return filteredByPredicate(userId, meal -> meal.getDate().compareTo(startDate) >= 0 &&
+                meal.getDate().compareTo(endDate) <= 0);
+    }
+
+    private List<Meal> filteredByPredicate(int userId, Predicate<Meal> filter) {
         Map<Integer, Meal> userMeals = repository.get(userId);
         if (userMeals == null) {
             return Collections.emptyList();
         }
 
         return userMeals.values().stream()
+                .filter(filter)
+                .collect(Collectors.toList()).stream()
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Meal> getAllFilteredByDateAndTime(int userId, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
-        return getAll(userId).stream()
-                .filter(meal ->
-                        DateTimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime) &&
-                                meal.getDate().compareTo(startDate) >= 0 && meal.getDate().compareTo(endDate) <= 0)
                 .collect(Collectors.toList());
     }
 }

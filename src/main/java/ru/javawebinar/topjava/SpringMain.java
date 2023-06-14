@@ -21,8 +21,9 @@ public class SpringMain {
 
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
             System.out.println(mealRestController.getAll());
-            System.out.println(mealRestController.getAllFilteredByDateAndTime(LocalDate.of(2020, 1, 31), LocalTime.of(11, 0),
-                    LocalDate.of(2020, 1, 31), LocalTime.MAX));
+            System.out.println(mealRestController.getAllFilteredByDateAndTime(
+                    LocalDate.of(2020, 1, 31), LocalDate.of(2020, 1, 31),
+                    LocalTime.of(7, 0), LocalTime.of(12, 0)));
         }
     }
 }

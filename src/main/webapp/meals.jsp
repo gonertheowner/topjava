@@ -21,7 +21,7 @@
     <h3><a href="index.html">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
-    <form method="get" action="meals?action=filter">
+    <form method="get">
         <div>
             <div>
                 From date (inclusive)

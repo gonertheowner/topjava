@@ -16,5 +16,5 @@ VALUES ('USER', 100000),
        ('ADMIN', 100001);
 
 INSERT INTO meals (datetime, description, calories, user_id)
-VALUES (now(), 'description', 1000, 100000),
+VALUES ('2020-02-12', 'description', 1000, 100000),
        ('2020-01-12', 'another description', 500, 100000);

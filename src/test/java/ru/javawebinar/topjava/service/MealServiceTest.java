@@ -9,15 +9,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -42,7 +39,7 @@ public class MealServiceTest {
     @Test
     public void get() {
         Meal meal = service.get(MEAL_ID, USER_ID);
-        assertMatch(meal, MealTestData.meal);
+        assertMatch(meal, firstMeal);
     }
 
     @Test
@@ -74,20 +71,18 @@ public class MealServiceTest {
     @Test
     public void getAll() {
         List<Meal> meals = service.getAll(USER_ID);
-        assertMatch(meals, MealTestData.meals.stream()
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList()));
+        assertMatch(meals, Arrays.asList(thirdMeal, secondMeal, firstMeal));
     }
 
     @Test
-    public void getBetweenInclusive() {
-        assertMatch(service.getBetweenInclusive(null, null, USER_ID),
-                meals.stream()
-                        .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                        .collect(Collectors.toList()));
+    public void getBetweenInclusiveWithEmptyBounds() {
+        assertMatch(service.getBetweenInclusive(null, null, USER_ID), Arrays.asList(thirdMeal, secondMeal, firstMeal));
+    }
 
+    @Test
+    public void getBetweenInclusiveWithConcreteBounds() {
         assertMatch(service.getBetweenInclusive(LocalDate.of(2020, 2, 12),
-                LocalDate.of(2020, 2, 14), USER_ID), Collections.singletonList(meal));
+                LocalDate.of(2020, 2, 14), USER_ID), Arrays.asList(secondMeal, firstMeal));
     }
 
     @Test
@@ -99,12 +94,12 @@ public class MealServiceTest {
 
     @Test
     public void updateNotFound() {
-        assertThrows(NotFoundException.class, () -> service.update(notExistingMeal, USER_ID));
+        assertThrows(NotFoundException.class, () -> service.update(new Meal(notExistingMeal), USER_ID));
     }
 
     @Test
     public void updateOthersMeal() {
-        assertThrows(NotFoundException.class, () -> service.update(meal, ADMIN_ID));
+        assertThrows(NotFoundException.class, () -> service.update(new Meal(firstMeal), ADMIN_ID));
     }
 
     @Test
@@ -120,6 +115,6 @@ public class MealServiceTest {
     @Test
     public void duplicateDateTimeCreate() {
         assertThrows(DataAccessException.class, () ->
-                service.create(new Meal(null, meal.getDateTime(), "Duplicate", 1000), USER_ID));
+                service.create(new Meal(null, firstMeal.getDateTime(), "Duplicate", 1000), USER_ID));
     }
 }

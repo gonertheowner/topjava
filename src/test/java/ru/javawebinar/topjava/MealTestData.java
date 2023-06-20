@@ -11,9 +11,11 @@ public class MealTestData {
 
     public static final int MEAL_ID = START_SEQ + 3;
     public static final int NOT_FOUND = START_SEQ + 10;
-    public static final Meal meal = new Meal(MEAL_ID, LocalDateTime.of(2020, 2, 12, 10, 0),
+    public static final Meal firstMeal = new Meal(MEAL_ID, LocalDateTime.of(2020, 2, 12, 10, 0),
             "description", 1000);
-    public static final Meal anotherMeal = new Meal(MEAL_ID + 1, LocalDateTime.of(2020, 2, 15, 13, 0),
+    public static final Meal secondMeal = new Meal(MEAL_ID + 1, LocalDateTime.of(2020, 2, 13, 15, 0),
+            "meal", 350);
+    public static final Meal thirdMeal = new Meal(MEAL_ID + 2, LocalDateTime.of(2020, 2, 15, 13, 0),
             "another description", 500);
     public static final Meal notExistingMeal = new Meal(NOT_FOUND, LocalDateTime.now(), "", 100);
 
@@ -22,7 +24,7 @@ public class MealTestData {
     }
 
     public static Meal getUpdated() {
-        Meal updated = new Meal(meal);
+        Meal updated = new Meal(firstMeal);
         updated.setDescription("updated");
         updated.setCalories(700);
         return updated;

@@ -13,7 +13,6 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertThrows;
@@ -71,18 +70,18 @@ public class MealServiceTest {
     @Test
     public void getAll() {
         List<Meal> meals = service.getAll(USER_ID);
-        assertMatch(meals, Arrays.asList(thirdMeal, secondMeal, firstMeal));
+        assertMatch(meals, thirdMeal, secondMeal, firstMeal);
     }
 
     @Test
     public void getBetweenInclusiveWithEmptyBounds() {
-        assertMatch(service.getBetweenInclusive(null, null, USER_ID), Arrays.asList(thirdMeal, secondMeal, firstMeal));
+        assertMatch(service.getBetweenInclusive(null, null, USER_ID), thirdMeal, secondMeal, firstMeal);
     }
 
     @Test
     public void getBetweenInclusiveWithConcreteBounds() {
         assertMatch(service.getBetweenInclusive(LocalDate.of(2020, 2, 12),
-                LocalDate.of(2020, 2, 14), USER_ID), Arrays.asList(secondMeal, firstMeal));
+                LocalDate.of(2020, 2, 14), USER_ID), secondMeal, firstMeal);
     }
 
     @Test

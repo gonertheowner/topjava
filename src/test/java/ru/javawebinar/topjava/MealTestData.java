@@ -19,7 +19,7 @@ public class MealTestData {
     public static final List<Meal> meals = Arrays.asList(
             new Meal(MEAL_ID, LocalDateTime.of(2020, 2, 12, 10, 0),
                     "description", 1000),
-            new Meal(MEAL_ID + 1, LocalDateTime.of(2020, 2, 12, 13, 0),
+            new Meal(MEAL_ID + 1, LocalDateTime.of(2020, 2, 15, 13, 0),
                     "another description", 500)
     );
 

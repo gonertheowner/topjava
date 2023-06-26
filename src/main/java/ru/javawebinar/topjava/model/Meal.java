@@ -9,11 +9,21 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @NamedNativeQueries({
-        @NamedNativeQuery(name = Meal.DELETE, query = "DELETE FROM meal WHERE id=:id AND user_id=:userId"),
-        @NamedNativeQuery(name = Meal.ALL_SORTED, query = "SELECT * FROM meal WHERE user_id=:userId ORDER BY date_time DESC"),
-        @NamedNativeQuery(name = Meal.BETWEEN_HALF_OPEN,
+        @NamedNativeQuery(
+                name = Meal.DELETE,
+                query = "DELETE FROM meal WHERE id=:id AND user_id=:userId"
+        ),
+        @NamedNativeQuery(
+                name = Meal.ALL_SORTED,
+                query = "SELECT * FROM meal WHERE user_id=:userId ORDER BY date_time DESC",
+                resultClass = Meal.class
+        ),
+        @NamedNativeQuery(
+                name = Meal.BETWEEN_HALF_OPEN,
                 query = "SELECT * FROM meal WHERE user_id=:userId AND date_time >= :startDateTime " +
-                        "AND date_time < :endDateTime ORDER BY date_time DESC")
+                        "AND date_time < :endDateTime ORDER BY date_time DESC",
+                resultClass = Meal.class
+        )
 })
 @Entity
 @Table(name = "meal",

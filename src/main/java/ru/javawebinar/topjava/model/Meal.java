@@ -8,22 +8,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-@NamedNativeQueries({
-        @NamedNativeQuery(
-                name = Meal.DELETE,
-                query = "DELETE FROM meal WHERE id=:id AND user_id=:userId"
-        ),
-        @NamedNativeQuery(
-                name = Meal.ALL_SORTED,
-                query = "SELECT * FROM meal WHERE user_id=:userId ORDER BY date_time DESC",
-                resultClass = Meal.class
-        ),
-        @NamedNativeQuery(
-                name = Meal.BETWEEN_HALF_OPEN,
-                query = "SELECT * FROM meal WHERE user_id=:userId AND date_time >= :startDateTime " +
-                        "AND date_time < :endDateTime ORDER BY date_time DESC",
-                resultClass = Meal.class
-        )
+@NamedQueries({
+        @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:id AND m.user.id=:userId"),
+        @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m WHERE m.user.id=:userId ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = Meal.BETWEEN_HALF_OPEN, query = "SELECT m FROM Meal m WHERE m.user.id=:userId " +
+                "AND m.dateTime >= :startDateTime AND m.dateTime < :endDateTime ORDER BY m.dateTime DESC")
 })
 @Entity
 @Table(name = "meal",

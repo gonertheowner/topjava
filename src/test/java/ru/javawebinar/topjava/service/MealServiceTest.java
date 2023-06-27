@@ -3,7 +3,7 @@ package ru.javawebinar.topjava.service;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -19,7 +19,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertThrows;
@@ -36,31 +36,32 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 public class MealServiceTest {
 
     private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
-    private static final Map<String, Long> testsExecutionTimes = new HashMap<>();
-
-    @Rule
-    public final TestWatcher watcher = new TestWatcher() {
-
-        private long start;
-        private long finish;
-
-        @Override
-        protected void starting(Description description) {
-            start = System.currentTimeMillis();
-        }
-
-        @Override
-        protected void finished(Description description) {
-            finish = System.currentTimeMillis();
-            String testName = description.getMethodName();
-            long testTime = finish - start;
-            log.info("{}: {}ms", testName, testTime);
-            testsExecutionTimes.put(testName, testTime);
-        }
-    };
+    private static final Map<String, Long> testsExecutionTimes = new LinkedHashMap<>();
 
     @Autowired
     private MealService service;
+
+    @Rule
+    public final Stopwatch stopwatch = new Stopwatch() {
+        @Override
+        protected void finished(long nanos, Description description) {
+            String testName = description.getMethodName();
+            long testExecutionTimeInMilliSeconds = nanos / 1_000_000;
+
+            log.info("{}: {}ms", testName, testExecutionTimeInMilliSeconds);
+            testsExecutionTimes.put(testName, testExecutionTimeInMilliSeconds);
+        }
+    };
+
+    @AfterClass
+    public static void printTestsSummary() {
+        StringBuilder result = new StringBuilder("\n");
+        for (Map.Entry<String, Long> entry : testsExecutionTimes.entrySet()) {
+            String alignedString = String.format("%-25s %,15d", entry.getKey(), entry.getValue());
+            result.append(alignedString).append("ms\n");
+        }
+        log.info(result.toString());
+    }
 
     @Test
     public void delete() {
@@ -139,13 +140,5 @@ public class MealServiceTest {
     @Test
     public void getBetweenWithNullDates() {
         MEAL_MATCHER.assertMatch(service.getBetweenInclusive(null, null, USER_ID), meals);
-    }
-
-    @AfterClass
-    public static void printTestsSummary() {
-        for (String testName : testsExecutionTimes.keySet()) {
-            long testTime = testsExecutionTimes.get(testName);
-            log.info("{}: {}ms", testName, testTime);
-        }
     }
 }

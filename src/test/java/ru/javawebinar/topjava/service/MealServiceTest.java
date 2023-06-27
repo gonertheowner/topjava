@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -46,7 +47,7 @@ public class MealServiceTest {
         @Override
         protected void finished(long nanos, Description description) {
             String testName = description.getMethodName();
-            long testExecutionTimeInMilliSeconds = nanos / 1_000_000;
+            long testExecutionTimeInMilliSeconds = TimeUnit.MILLISECONDS.convert(nanos, TimeUnit.NANOSECONDS);
 
             log.info("{}: {}ms", testName, testExecutionTimeInMilliSeconds);
             testsExecutionTimes.put(testName, testExecutionTimeInMilliSeconds);
@@ -57,8 +58,8 @@ public class MealServiceTest {
     public static void printTestsSummary() {
         StringBuilder result = new StringBuilder("\n");
         for (Map.Entry<String, Long> entry : testsExecutionTimes.entrySet()) {
-            String alignedString = String.format("%-25s %,15d", entry.getKey(), entry.getValue());
-            result.append(alignedString).append("ms\n");
+            String alignedString = String.format("%-25s %,15d %s\n", entry.getKey(), entry.getValue(), "ms");
+            result.append(alignedString);
         }
         log.info(result.toString());
     }
